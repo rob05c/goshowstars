@@ -148,7 +148,8 @@ func main() {
 	flag.Parse()
 
 	if dataservice == "" {
-			printUsage()
+		printUsage()
+		return
 	}
 
 	if(len(dataservice) > len("http://") && dataservice[0:len("http://")] == "http://") {
@@ -181,6 +182,7 @@ func main() {
 		_, err = w.Write(indexHtml)
 		if err != nil {
 			fmt.Println(err)
+			return
 		}
 	})
 
