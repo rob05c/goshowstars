@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script type="text/javascript">
+      <!--
+      function submitfunc(value) {
+        document.location.href = "/star/" + value;
+        return false;
+      }
+      //-->
+    </script>
     <meta charset="UTF-8">
     <title>goshowstars star {{.Id}}</title>
   </head>
@@ -14,5 +22,13 @@
     Color: {{.Color}} <br />
     Absolute Magnitude: {{.AbsoluteMagnitude}} <br />
     Spectrum: {{.Spectrum}} <br />
+    <hr />
+
+    <form name="starform">
+      <!-- \todo template dynamically fetch the max 119616 -->
+      Search another star: <input type="text" id="starformid" name="id" onkeydown="if (event.keyCode == 13) {submitfunc(document.getElementById('starformid').value); return false;}">
+      <input type="button" value="Go" onclick="submitfunc(document.getElementById('starformid').value)">
+    </form>
+
   </body>
 </html>
