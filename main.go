@@ -175,11 +175,25 @@ func main() {
 		return
 	}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Serving request to " + r.URL.Path)
+	serveIndex := func(w http.ResponseWriter) error {
 		w.Header().Add("Content-Type", "text/html")
 		w.Header().Add("Content-Length", strconv.Itoa(len(indexHtml)))
 		_, err = w.Write(indexHtml)
+		return err
+	};
+
+	serveStar := func(w http.ResponseWriter, id int64) error {
+		star, err := getstar(id)
+		if err != nil {
+			return err
+		}
+		return starTemplate.Execute(w, star)
+	};
+
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Serving request to " + r.URL.Path)
+		err := serveIndex(w)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -190,20 +204,18 @@ func main() {
 		fmt.Println("Serving request to " + r.URL.Path)
 
 		staridStr := r.URL.Path[len("/star/"):]
+
 		starid, err := strconv.ParseInt(staridStr, 10, 64)
 		_, err = strconv.Atoi(staridStr)
 		if err != nil {
-			fmt.Println(err)
-			return
+			serveIndex(w)
 		}
 
-		star, err := getstar(starid)
+		err = serveStar(w, starid)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-
-		starTemplate.Execute(w, star)
 	})
 
 	fmt.Println("Serving on " + strconv.Itoa(int(port)) + "...")
