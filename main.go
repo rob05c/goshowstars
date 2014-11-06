@@ -23,6 +23,7 @@ const starTemplateFile = "startemplate.html"
 
 var port uint
 var dataservice string
+var filePath string
 
 func init() {
 	const (
@@ -30,20 +31,24 @@ func init() {
 		portUsage            = "http serve port"
 		dataserviceDefault   = ""
 		dataserviceUsage     = "URL for data service"
+		filePathDefault      = ""
+		filePathUsage        = "Working directory, for html files"
 	)
 	flag.UintVar(&port, "port", portDefault, portUsage)
 	flag.UintVar(&port, "p", portDefault, portUsage+" (shorthand)")
 	flag.StringVar(&dataservice, "data-service", dataserviceDefault, dataserviceUsage)
 	flag.StringVar(&dataservice, "d", dataserviceDefault, dataserviceUsage+" (shorthand)")
+	flag.StringVar(&filePath, "files", filePathDefault, filePathUsage)
+	flag.StringVar(&filePath, "f", filePathDefault, filePathUsage+" (shorthand)")
 }
 
 func printUsage() {
 	exeName := os.Args[0]
 	fmt.Println(exeName + " " + version + " usage: ")
-	fmt.Println("\t" + exeName + "-d data-service-url -p serve-port")
+	fmt.Println("\t" + exeName + "-d data-service-url -p serve-port -f html-files-path")
 	fmt.Println("flags:")
 	flag.PrintDefaults()
-	fmt.Println("example:\n\t" + exeName + "-d 192.168.0.42 -p 80")
+	fmt.Println("example:\n\t" + exeName + "-d 192.168.0.42 -p 80 -f data")
 }
 
 type Star struct {
@@ -161,14 +166,14 @@ func main() {
 		return
 	}
 
-	indexHtml, err := ioutil.ReadFile(indexFile)
+	indexHtml, err := ioutil.ReadFile(filePath + "/" + indexFile)
 	if err != nil {
 		fmt.Println("Error reading index file: ")
 		fmt.Println(err)
 		return
 	}
 
-	starTemplate, err := template.ParseFiles(starTemplateFile)
+	starTemplate, err := template.ParseFiles(filePath + "/" + starTemplateFile)
 	if err != nil {
 		fmt.Println("Error reading star template file: ")
 		fmt.Println(err)
